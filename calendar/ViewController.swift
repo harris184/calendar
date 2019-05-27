@@ -10,13 +10,15 @@ import UIKit
 import JTAppleCalendar
 class ViewController: UIViewController {
     @IBOutlet var calendarView: JTAppleCalendarView!
-   
+    var month = ""
     @IBOutlet weak var dateHeader: DateHeader!
     @IBOutlet weak var dayLabel: UILabel!
     override func viewDidLoad() {
         calendarView.scrollDirection = .horizontal
         calendarView.scrollingMode   = .stopAtEachCalendarFrame
         calendarView.showsHorizontalScrollIndicator = false
+    
+
         super.viewDidLoad()
     }
     
@@ -25,8 +27,9 @@ extension ViewController: JTAppleCalendarViewDataSource {
     func configureCalendar(_ calendar: JTAppleCalendarView) -> ConfigurationParameters {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy MM dd"
-        let startDate = formatter.date(from: "2018 01 01")!
+        let startDate = formatter.date(from: "2019 01 01")!
         let endDate = Date()
+         calendarView.scrollToDate(Date())
          
         return ConfigurationParameters(startDate: startDate, endDate: endDate)
     }
@@ -54,7 +57,7 @@ extension ViewController: JTAppleCalendarViewDelegate {
         
         let header = calendar.dequeueReusableJTAppleSupplementaryView(withReuseIdentifier: "DateHeader", for: indexPath) as! DateHeader
         header.monthTitle.text = formatter.string(from: range.start)
-        dayLabel.text = dayLabel.text! + " " + header.monthTitle.text!
+        month = header.monthTitle.text!
         return header
     }
     
@@ -71,9 +74,9 @@ func configureCell(view: JTAppleCell?, cellState: CellState) {
 
 func handleCellTextColor(cell: DateCell, cellState: CellState) {
     if cellState.dateBelongsTo == .thisMonth {
-        cell.dateLabel.textColor = UIColor.black
+        cell.isHidden = false
     } else {
-        cell.dateLabel.textColor = UIColor.gray
+        cell.isHidden = true
     }
 }
 func handleCellSelected(cell: DateCell, cellState: CellState) {
@@ -81,7 +84,7 @@ func handleCellSelected(cell: DateCell, cellState: CellState) {
         cell.selectedView.layer.cornerRadius =  13
         cell.selectedView.isHidden = false
         
-        dayLabel.text = dayLabel.text! + " " + cell.dateLabel.text!
+        dayLabel.text = "The Date is: " + month + " " + cell.dateLabel.text!
     } else {
         cell.selectedView.isHidden = true
     }
